@@ -24,7 +24,9 @@ bot = shared_info.bot
 
 def clean_priorities(db):
     for n, s in db.items():
-        offers = s['offers']
+        offers = s.get('offers')
+        if offers is None:
+            continue
         offers = sorted(offers, key=lambda o: o['priority'])
         teams = []
         for o in offers:
