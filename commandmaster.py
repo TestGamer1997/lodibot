@@ -28,7 +28,7 @@ def track_command(command, message):
     else:
         usertracks.update({command:usertracks[command]+1})
     if random.random() < 0.99999:
-        os.rename(data_path("tracking.json"),data_path("tracking_backup.json"))
+        os.replace(data_path("tracking.json"),data_path("tracking_backup.json"))
         f = open(data_path("tracking.json"),"w")
         f.write(json.dumps(tracks))
         f.close()
