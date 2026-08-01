@@ -117,15 +117,15 @@ async def fa_prompt2(message):
     embed = discord.Embed(title="Odle Settings - Free Agency (Page 2/2)", description=f"FA Settings for server {serverName}" + '\n' + f"*Use `{prefix}settings fa` for page 1*")
     
     embed.add_field(name='Mood Trait Weights', value='*Base weights for FA decisions. Default is 0.1, trait adds 1.0*' + '\n' + '\n'
-                    + f"**Winning:** ``{serverSettings['winning']}``" + '\n'
-                    + f"**Fame:** ``{serverSettings['fame']}``" + '\n'
-                    + f"**Loyalty:** ``{serverSettings['loyalty']}``" + '\n'
-                    + f"**Money:** ``{serverSettings['money']}``" + '\n'
-                    + f"**Idiosyncratic:** ``{serverSettings['idiosyncratic']}``" + '\n' + '\n'
+                    + f"**Winning:** ``{serverSettings.get('winning', 0.1)}``" + '\n'
+                    + f"**Fame:** ``{serverSettings.get('fame', 0.1)}``" + '\n'
+                    + f"**Loyalty:** ``{serverSettings.get('loyalty', 0.1)}``" + '\n'
+                    + f"**Money:** ``{serverSettings.get('money', 0.1)}``" + '\n'
+                    + f"**Idiosyncratic:** ``{serverSettings.get('idiosyncratic', 0.1)}``" + '\n' + '\n'
                     + f"*Edit with {prefix}edit [trait] [weight]*")
     
-    embed.add_field(name='Special Rules', value=f"**Restricted FA:** ``{serverSettings['rfa']}``" + '\n'
-                    + f"**RFA Multiplier:** ``{serverSettings['rfamultiplier']}``" + '\n' + '\n'
+    embed.add_field(name='Special Rules', value=f"**Restricted FA:** ``{serverSettings.get('rfa', 'off')}``" + '\n'
+                    + f"**RFA Multiplier:** ``{serverSettings.get('rfamultiplier', 1.0)}``" + '\n' + '\n'
                     + f"**3+ Year Rule:** ``{serverSettings.get('threeyearrule', 'off')}``" + '\n'
                     + f"*3+ year offers need 250% of min salary*" + '\n'
                     + f"*Edit with {prefix}edit threeyearrule [on/off]*")
