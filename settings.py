@@ -126,7 +126,7 @@ async def fa_prompt2(message):
     
     embed.add_field(name='Special Rules', value=f"**Restricted FA:** ``{serverSettings['rfa']}``" + '\n'
                     + f"**RFA Multiplier:** ``{serverSettings['rfamultiplier']}``" + '\n' + '\n'
-                    + f"**3+ Year Rule:** ``{serverSettings['threeyearrule']}``" + '\n'
+                    + f"**3+ Year Rule:** ``{serverSettings.get('threeyearrule', 'off')}``" + '\n'
                     + f"*3+ year offers need 250% of min salary*" + '\n'
                     + f"*Edit with {prefix}edit threeyearrule [on/off]*")
     

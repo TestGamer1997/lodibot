@@ -13,6 +13,24 @@ import copy
 import json
 import subprocess
 import sys
+
+
+def get_server_setting(server_settings, setting_name, default=None):
+    if server_settings is None:
+        return default
+    if hasattr(server_settings, 'get'):
+        return server_settings.get(setting_name, default)
+    return default
+
+
+def get_server_settings(server_id):
+    if server_id in serversList:
+        return serversList[server_id]
+    if str(server_id) in serversList:
+        return serversList[str(server_id)]
+    return {}
+
+
 async def viewalloffers(embed, text, commandInfo):
     message = commandInfo['message']
     if shared_info.serversList[str(commandInfo['serverId'])]['openmarket'] == "off":
@@ -535,9 +553,11 @@ async def offer(embed, text, commandInfo):
         try: years = int(offerText[1])
         except: validFormat = False
         if validFormat:
+            server_settings = get_server_settings(commandInfo['serverId'])
+
             #CHECK SERVER CONTRACT RULES
-            if 'crules' in serversList[commandInfo['serverId']]:
-                rules = serversList[commandInfo['serverId']]['crules']
+            if 'crules' in server_settings:
+                rules = server_settings['crules']
             else:
                 rules = []
             ovr = offerPlayerAdvanced['ratings'][-1]['ovr']
@@ -555,12 +575,12 @@ async def offer(embed, text, commandInfo):
             #check for extras
             option = None
             if len(offerPlayerAdvanced['ratings'][-1]['skills']) > 0 and 'RFA' in offerPlayerAdvanced['ratings'][-1]['skills'][-1]:
-                if amount < offerPlayerAdvanced['salaries'][-1]['amount']*float(serversList[commandInfo['serverId']]['rfamultiplier'])/1000:
+                if amount < offerPlayerAdvanced['salaries'][-1]['amount']*float(get_server_setting(server_settings, 'rfamultiplier', '100'))/1000:
                     pname = offerPlayer['name']
-                    embed.add_field(name = "Are you a lawyer?", value = "Cause you sure are trying to find a legal loophole.\nHowever, "+pname+" is a restricted FA. Offer at least "+str(offerPlayerAdvanced['salaries'][-1]['amount']*float(serversList[commandInfo['serverId']]['rfamultiplier'])/1000)+" million. **It's the law!**")
+                    embed.add_field(name = "Are you a lawyer?", value = "Cause you sure are trying to find a legal loophole.\nHowever, "+pname+" is a restricted FA. Offer at least "+str(offerPlayerAdvanced['salaries'][-1]['amount']*float(get_server_setting(server_settings, 'rfamultiplier', '100'))/1000)+" million. **It's the law!**")
                     return embed
             if str.upper(text[-1]) == 'PO' or str.upper(text[-1]) == 'TO':
-                if serversList[commandInfo['serverId']]['options'] == 'on':
+                if get_server_setting(server_settings, 'options', 'off') == 'on':
                     option = str.upper(text[-1])
                 else:
                     embed.add_field(name='⚠️ Warning', value='You attempted to offer an option, which is not turned on for this server. Therefore, that part of the offer was ignored.', inline=False)
@@ -573,11 +593,11 @@ async def offer(embed, text, commandInfo):
                     embed.add_field(name='⚠️ Warning', value='This player is not currently a free agent. The offer has been recorded in case you anticipate that they will become a free agent, but it might be invalidated before FA is run.', inline=False)
             else:
                 askingPrice = offerPlayer['contractAmount']
-                holdoutLimit = float(serversList[commandInfo['serverId']]['holdout'])/100 * askingPrice
+                holdoutLimit = float(get_server_setting(server_settings, 'holdout', '0'))/100 * askingPrice
                 if amount < holdoutLimit:
                     embed.add_field(name='❌️ Error', value=f'This server currently has holdouts enabled, and your offer of ${amount}M falls below the holdout amount for this player of ${holdoutLimit}M. Offers that are below holdout are now not allowed to be made. Deal with it. If the holdout is not supposed to be there, I bestow upon you the right to ping mods relentlessly until it is resolves.')
                     return embed
-                tuodlohLimit = float(serversList[commandInfo['serverId']]['tuodloh'])/100 * askingPrice
+                tuodlohLimit = float(get_server_setting(server_settings, 'tuodloh', '0'))/100 * askingPrice
                 if amount > tuodlohLimit and tuodlohLimit > 0:
                     embed.add_field(name='⚠️ Warning', value=f'This server currently has tuodloh limits enabled, and your offer of ${amount}M falls above the tuodloh amount for this player of ${tuodlohLimit}M. Feel free to keep this offer in case that limit changes or in case the asking price decreases, but it might be invalidated before FA is run.')
                     
@@ -598,7 +618,7 @@ async def offer(embed, text, commandInfo):
                 legalOffer = False
 
             #three year rule
-            if serversList[commandInfo['serverId']]['threeyearrule'] == 'on' and export['gameAttributes']['phase'] != 7:
+            if get_server_setting(server_settings, 'threeyearrule', 'off') == 'on' and export['gameAttributes']['phase'] != 7:
                 if years > 2 and amount < (export['gameAttributes']['minContract']/1000)*2.5:
                     min = (export['gameAttributes']['minContract']/1000)*2.5
                     legalOffer = False
