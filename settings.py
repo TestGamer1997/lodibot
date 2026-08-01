@@ -67,9 +67,11 @@ async def channels_prompt(message):
     serverSettings = shared_info.serversList[str(message.guild.id)]
     embed = discord.Embed(title="Odle Settings - Channels", description=f"Channel settings for server {serverName}")
     
+    trade_announce = serverSettings.get('tradeannouncechannel', 0)
+    trade_announce = trade_announce if trade_announce != 0 else 'Not set'
     embed.add_field(name='Transaction Channels', value=f"**Trade Confirmation:** {serverSettings['tradechannel']}" + '\n' 
                     + f'*Edit with {prefix}edit tradechannel [#channel]*' + '\n \n'
-                    + f"**Trade Announcement:** {serverSettings['tradeannouncechannel']}" + '\n' 
+                    + f"**Trade Announcement:** {trade_announce}" + '\n' 
                     + f'*Edit with {prefix}edit tradeannouncechannel [#channel]*', inline=False)
     
     embed.add_field(name='Free Agency Channels', value=f"**FA Signings:** {serverSettings['fachannel']}" + '\n' 

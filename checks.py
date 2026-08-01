@@ -13,6 +13,7 @@ def server_check(id, name):
             'draftStatus': {'draftRunning': False},
             'fachannel': 0,
             'tradechannel': 0,
+            'tradeannouncechannel': 0,
             'draftchannel': 0,
             'releasechannel': 0,
             'aimedia': 0,
